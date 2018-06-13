@@ -3,6 +3,22 @@ const drivers = require('../model/driver_model.js');
 const jwt = require('jsonwebtoken')
 
 
+route.post('/driverRegister',function(req,res){
+    var driver = new drivers({
+         name : req.body.name,
+         email : req.body.email,
+         phone : req.body.phone,
+         password : req.body.password,
+         admin : true
+     })
+     driver.save(function(err,node){
+         if(err){
+             res.send({message : "duplicate users not allowed"})
+         }
+         console.log(node)
+         res.send({succuss : "True",message : "succesfully stored"})
+     })
+ })
 
 
 route.post('/loginDriver',function(req,res){
@@ -69,17 +85,7 @@ route.get('/drivers', function(req,res){
     })
 })
 
-route.post('/driverRegister',function(req,res){
-   var driver = new drivers({
-        name : req.body.name,
-        email : req.body.email,
-        phone : req.body.phone,
-        password : req.body.password
-    })
-    driver.save(function(err,node){
-        res.send({succuss : "True",message : "succesfully stored", arr : node})
-    })
-})
+
 
 
 
@@ -101,6 +107,19 @@ route.put('/driverRegister/:id',function(req,res){
     })
 
 })
+
+ //remove all users
+route.delete('/removeAllUsers',function(req,res){
+    drivers.remove({
+        admin : "true"
+    },function(err,user){
+        if(err) {
+            return res.send(err)
+        }
+        res.json({message : "succesfully deleted all the users"})
+    })
+})
+
 route.delete('/driverRegister/:id',function(req,res){
     drivers.remove({ _id: req.params.id}, function(err,user){
         if(err){
